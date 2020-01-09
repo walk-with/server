@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
-import { Boards } from "./Boards";
+import { Walks } from "./Walks";
 
 @Entity()
 export class Tags {
@@ -10,6 +10,6 @@ export class Tags {
     @Column()
     tag: string;
 
-    @ManyToMany(type => Boards, board => board.tags)
-    boards: Boards[];
+    @ManyToMany(type => Walks, walk => walk.tags)
+    boards: Walks[];
 }

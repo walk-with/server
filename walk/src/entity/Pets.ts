@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from "typeorm";
 import { Users } from './Users';
-import { Boards } from './Boards';
+import { Walks } from "./Walks";
 @Entity()
 export class Pets {
 
@@ -25,6 +25,6 @@ export class Pets {
     @ManyToOne(type => Users, user => user.pet)
     user: Users;
 
-    @ManyToMany(type => Boards, board => board.pet)
-    boards: Boards[];
+    @ManyToMany(type => Walks, walk => walk.pet)
+    boards: Walks[];
 }
