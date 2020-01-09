@@ -1,0 +1,22 @@
+{
+   "name": "walk",
+   "version": "0.0.1",
+   "description": "Awesome project developed with TypeORM.",
+   "devDependencies": {
+      "@types/express": "^4.17.2",
+      "@types/node": "^8.0.29",
+      "ts-node": "3.3.0",
+      "typescript": "3.3.3333"
+   },
+   "dependencies": {
+      "mysql": "^2.14.1",
+      "nodemon": "^2.0.2",
+      "pg": "^7.17.0",
+      "reflect-metadata": "^0.1.10",
+      "typeorm": "0.2.22"
+   },
+   "scripts": {
+      "start": "npm run build:live",
+      "build:live": "nodemon --exec ./node_modules/.bin/ts-node  src/index.ts"
+   }
+}
