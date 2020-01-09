@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinTable } from "typeorm";
-import { Boards } from "./Boards";
+import { Walks } from "./Walks";
 import { Pets } from './Pets';
 import { Chats } from "./Chats";
 @Entity()
@@ -20,8 +20,8 @@ export class Users {
     @OneToMany(type => Pets, pet => pet.user)
     pet: Pets[];
 
-    @OneToMany(type => Boards, board => board.user)
-    board: Boards[];
+    @OneToMany(type => Walks, walk => walk.user)
+    board: Walks[];
 
     @OneToMany(type => Chats, chat => chat.user)
     chat: Chats[];

@@ -5,7 +5,7 @@ import { Tags } from './Tags';
 import { Pets } from './Pets';
 
 @Entity()
-export class Boards {
+export class Walks {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -17,7 +17,10 @@ export class Boards {
     date: string;
 
     @Column()
-    location: string;
+    Longitude: string;
+
+    @Column()
+    Latitude: string;
 
     @Column()
     spot: string;

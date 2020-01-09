@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { Users } from './Users';
-import { Boards } from './Boards';
+import { Walks } from "./Walks";
 @Entity()
 export class Chats {
 
@@ -13,6 +13,6 @@ export class Chats {
     @ManyToOne(type => Users, user => user.chat)
     user: Users;
 
-    @ManyToOne(type => Boards, board => board.chats)
-    board: Boards;
+    @ManyToOne(type => Walks, walk => walk.chats)
+    board: Walks;
 }
