@@ -1,16 +1,22 @@
 import "reflect-metadata";
-import { createConnection } from "typeorm";
-import express from 'express';
+import bodyParser from 'body-parser';
+import express, { response } from 'express';
 import margan from 'morgan';
+import { createConnection } from "typeorm";
+import userRoutes from './routes/UserRoutes';
 
-const app = express();
+createConnection().then(async connection => {
+    const app = express();
 
-// import { Request, Response } from 'express';
+    app.use(bodyParser.json());
+    app.use(margan('short'));
 
-
-app.use(margan);
-
-app.listen('4000', () => {
-    console.log("음...");
+    app.use('/users', userRoutes);
+    app.listen('4000', () => {
+        console.log("서버 작동 중");
+    });
+}).catch(err => {
+    response.status(500);
+    response.json({ err: '서버에러' });
+    throw new Error(err);
 });
-

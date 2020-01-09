@@ -8,23 +8,11 @@ export class Chats {
     id: number;
 
     @Column()
-    name: string;
-
-    @Column()
-    age: string;
-
-    @Column()
-    gender: string;
-
-    @Column()
-    image: string;
-
-    @Column()
-    keyword: string;
+    text: string;
 
     @ManyToOne(type => Users, user => user.chat)
     user: Users;
 
     @ManyToOne(type => Boards, board => board.chats)
-    board: Boards[];
+    board: Boards;
 }
