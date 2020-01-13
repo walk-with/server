@@ -35,7 +35,47 @@ export const signup = async function (req: Request, res: Response) {
     }
 };
 
+export const login = function (req: Request, res: Response) {
+    console.log("들어가니 로그인 라우터");
+    let { email, password } = req.body;
+    return getRepository(Users).findOne({ where: { email } })
+        .then(user => {
+            const checkPassword = crypto.createHmac('sha256', process.env.SALT).update(password).digest('hex');
+            console.log("login user", user);
+            if (user === undefined) {
+                res.status(401);
+                res.json({
+                    error: {
+                        status: 401,
+                        type: "LoginFailed",
+                        message: "입력하신 이메일에 일치하는 유저가 없습니다."
+                    }
+                });
+            }
+            if (user.password === checkPassword) {
+                res.status(200);
+                jwt.sign({ id: user.id }, process.env.KEY, { expiresIn: 3600 }, (err, token) => {
+                    res.json({
+                        token: token
+                    });
+                });
+            } else {
+                res.status(401);
+                res.json({
+                    error: {
+                        status: 401,
+                        type: "LoginFailed",
+                        message: "입력하신 비밀번호가 일치하지 않습니다."
+                    }
+                });
+            }
+        });
+};
 
-
-// export const login = function (req: Request, res: Response) { };
-// export const edit = function (req: Request, res: Response) { };
+export const edit = async function (req: Request, res: Response) {
+    // jwt주면 그거를 풀어서 아이디를 알아내자
+    // const Id = jwt.verify(,process.env.KEY)
+    // let { email, password, name } = req.body;
+    // password = crypto.createHmac('sha256', process.env.SALT).update(password).digest('hex');
+    // getRepository()
+};
