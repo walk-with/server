@@ -11,5 +11,5 @@ export class Tags {
     tag: string;
 
     @ManyToMany(type => Walks, walk => walk.tags)
-    boards: Walks[];
+    walk: Walks[];
 }

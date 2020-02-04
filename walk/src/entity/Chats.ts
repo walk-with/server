@@ -10,9 +10,13 @@ export class Chats {
     @Column()
     text: string;
 
-    @ManyToOne(type => Users, user => user.chat)
+    @ManyToOne(type => Users, user => user.chat, {
+        onDelete: "CASCADE"
+    })
     user: Users;
 
-    @ManyToOne(type => Walks, walk => walk.chats)
+    @ManyToOne(type => Walks, walk => walk.chats, {
+        onDelete: "CASCADE"
+    })
     board: Walks;
 }

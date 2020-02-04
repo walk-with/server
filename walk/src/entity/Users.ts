@@ -20,9 +20,13 @@ export class Users {
     @OneToMany(type => Pets, pet => pet.user)
     pet: Pets[];
 
-    @OneToMany(type => Walks, walk => walk.user)
+    @OneToMany(type => Walks, walk => walk.user, {
+        cascade: true
+    })
     board: Walks[];
 
-    @OneToMany(type => Chats, chat => chat.user)
+    @OneToMany(type => Chats, chat => chat.user, {
+        cascade: true
+    })
     chat: Chats[];
 }

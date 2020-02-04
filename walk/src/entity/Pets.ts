@@ -22,7 +22,9 @@ export class Pets {
     @Column()
     keyword: string;
 
-    @ManyToOne(type => Users, user => user.pet)
+    @ManyToOne(type => Users, user => user.pet, {
+        onDelete: "CASCADE"
+    })
     user: Users;
 
     @ManyToMany(type => Walks, walk => walk.pet)
