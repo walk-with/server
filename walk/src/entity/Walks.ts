@@ -23,18 +23,25 @@ export class Walks {
     Latitude: string;
 
     @Column()
-    spot: string;
+    StartTime: string;
 
     @Column()
-    time: string;
+    EndTime: string;
 
-    @ManyToOne(type => Users, user => user.board)
+    @Column()
+    contents: string;
+
+    @ManyToOne(type => Users, user => user.board, {
+        onDelete: "CASCADE"
+    })
     user: Users;
 
-    @OneToMany(type => Chats, chat => chat.board)
+    @OneToMany(type => Chats, chat => chat.board, {
+        cascade: true
+    })
     chats: Chats[];
 
-    @ManyToMany(type => Tags, tag => tag.boards)
+    @ManyToMany(type => Tags, tag => tag.walk)
     @JoinTable()
     tags: Tags[];
 

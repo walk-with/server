@@ -8,11 +8,9 @@ env.config();
 
 export const signup = async function (req: Request, res: Response) {
     let { email, password, name } = req.body;
-    console.log('SALT', process.env.SALT);
     const checkuser = await getRepository(Users).find({
         email: email
     });
-    console.log("check", checkuser.length);
     if (checkuser.length === 0) {
         password = crypto.createHmac('sha256', process.env.SALT).update(password).digest('hex');
         // tslint:disable-next-line: await-promise
@@ -74,8 +72,26 @@ export const login = function (req: Request, res: Response) {
 
 export const edit = async function (req: Request, res: Response) {
     // jwt주면 그거를 풀어서 아이디를 알아내자
-    // const Id = jwt.verify(,process.env.KEY)
-    // let { email, password, name } = req.body;
-    // password = crypto.createHmac('sha256', process.env.SALT).update(password).digest('hex');
-    // getRepository()
+    const userId = jwt.verify(req.headers.authorization, process.env.KEY);
+    console.log("userId", userId);
+    if (userId) {
+        let { email, password, name } = req.body;
+        password = crypto.createHmac('sha256', process.env.SALT).update(password).digest('hex');
+        const ChangeUser = await getRepository(Users).update(userId, {
+            email, password, name
+        });
+        console.log("change", ChangeUser);
+        res.status(200);
+        res.json({ message: "성공적으로 수정되었습니다." });
+    }
+    else {
+        res.status(403);
+        res.json({
+            error: {
+                status: 403,
+                type: "ExpiredToken",
+                message: "만료된 토큰입니다. 비밀번호 재설정 요청을 다시 해주세요."
+            }
+        });
+    }
 };
