@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { getRepository } from "typeorm";
 import env from 'dotenv';
 import jwt from "jsonwebtoken";
-import { fakeList } from '../utils/fake';
 import { Day } from '../utils/Date';
 import { Walks } from '../entity/Walks';
 import { Users } from '../entity/Users';
@@ -64,7 +63,8 @@ export const list = async function (req: Request, res: Response) {
     // console.log("WalkImageAndId", WalkImageAndIds);
     let count = 0;
     const walksListTags = await getRepository(Walks).find({
-        relations: ['tags', 'user']
+        relations: ['tags', 'user'],
+        where: { date: Day }
     });
 
     let tags: any[] = [];
@@ -105,9 +105,9 @@ export const list = async function (req: Request, res: Response) {
         Time = [];
         // user의 데이터 빼는 반복문
     }
-    console.log("RealObject", RealData);
     res.status(200);
-    res.json(fakeList);
+    console.log("REAL", RealData);
+    res.json(RealData);
 };
 export const detail = async function (req: Request, res: Response) {
     const walkId: string = req.query.walkId;
@@ -123,7 +123,6 @@ export const detail = async function (req: Request, res: Response) {
             Tags.push(detailWalk["tags"][n]["tag"]);
         }
         detailWalk["tags"] = Tags;
-        console.log("detailWalk", detailWalk);
         res.status(200);
         res.json(detailWalk);
     } else {
@@ -162,15 +161,12 @@ export const create = async function (req: Request, res: Response) {
             let walkTag = await getRepository(Tags).findOne({
                 id: tags[i]
             });
-            console.log("WalkTag", walkTag);
             TagsInfo.push(walkTag);
         }
         Walk.user = organizer;
         Walk.tags = TagsInfo;
         Walk.pet = organizerPet;
-        console.log("Walk", Walk);
         const SaveWalk = await getRepository(Walks).save(Walk);
-        console.log("SAVE", SaveWalk);
     } else {
         res.status(403);
         res.json({
