@@ -95,3 +95,41 @@ export const edit = async function (req: Request, res: Response) {
         });
     }
 };
+
+export const Info = function (req: Request, res: Response) {
+    const UserId = jwt.verify(req.headers.authorization, process.env.KEY).id;
+    console.log("userId", UserId);
+    if (UserId) {
+        // tslint:disable-next-line: no-floating-promises
+        getRepository(Users).findOne({
+            where: {
+                id: UserId
+            },
+            select: ["name"]
+        }).then(data => {
+            if (data) {
+                ///
+                res.status(200);
+                res.json(data);
+            } else {
+                res.status(404);
+                res.json({
+                    error: {
+                        status: 404,
+                        type: "EmailNotFound",
+                        message: "입력하신 이메일로 가입되어 있는 일반 계정이 없습니다."
+                    }
+                });
+            }
+        });
+    } else {
+        res.status(403);
+        res.json({
+            error: {
+                status: 403,
+                type: "ExpiredToken",
+                message: "만료된 토큰입니다. 비밀번호 재설정 요청을 다시 해주세요."
+            }
+        });
+    }
+};

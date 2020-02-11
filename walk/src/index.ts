@@ -23,7 +23,7 @@ createConnection().then(async connection => {
     // app.use('/pets');
     // app.use('/chats');
     app.listen('4000', () => {
-        console.log("서버 작동 중");
+        console.log("4000 서버 작동 중");
     });
 }).catch(err => {
     throw new Error(err);

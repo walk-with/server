@@ -105,7 +105,6 @@ export const list = async function (req: Request, res: Response) {
         Time = [];
         // user의 데이터 빼는 반복문
     }
-    console.log("RealObject", RealData);
     res.status(200);
     res.json(fakeList);
 };
@@ -162,15 +161,17 @@ export const create = async function (req: Request, res: Response) {
             let walkTag = await getRepository(Tags).findOne({
                 id: tags[i]
             });
-            console.log("WalkTag", walkTag);
             TagsInfo.push(walkTag);
         }
         Walk.user = organizer;
         Walk.tags = TagsInfo;
         Walk.pet = organizerPet;
-        console.log("Walk", Walk);
         const SaveWalk = await getRepository(Walks).save(Walk);
-        console.log("SAVE", SaveWalk);
+        if (SaveWalk) {
+            let WalkData = { walkId: SaveWalk.id };
+            res.status(201);
+            res.json(WalkData);
+        }
     } else {
         res.status(403);
         res.json({
