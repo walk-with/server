@@ -105,7 +105,7 @@ export const lazy = async function (connection: any) {
     pet11.user = user3;
     const Pet11 = await connection.manager.save(pet11);
     console.log("pets", Pet11);
-
+    //
     const walks = new Walks();
     walks.title = "호수 근처 탐방";
     walks.date = Day;

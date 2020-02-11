@@ -108,6 +108,7 @@ export const Info = function (req: Request, res: Response) {
             select: ["name"]
         }).then(data => {
             if (data) {
+                ///
                 res.status(200);
                 res.json(data);
             } else {

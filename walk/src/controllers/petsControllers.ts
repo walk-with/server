@@ -26,7 +26,6 @@ export const PetCreate = async function (req: Request, res: Response) {
         });
         // tslint:disable-next-line: no-floating-promises
         getRepository(Pets).save(Pet).then(data => {
-            // console.log("data", data);
             if (data) {
                 res.sendStatus(201);
             } else {

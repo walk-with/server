@@ -167,6 +167,11 @@ export const create = async function (req: Request, res: Response) {
         Walk.tags = TagsInfo;
         Walk.pet = organizerPet;
         const SaveWalk = await getRepository(Walks).save(Walk);
+        if (SaveWalk) {
+            let WalkData = { walkId: SaveWalk.id };
+            res.status(201);
+            res.json(WalkData);
+        }
     } else {
         res.status(403);
         res.json({
