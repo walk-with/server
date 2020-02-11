@@ -39,6 +39,7 @@ export const login = function (req: Request, res: Response) {
     return getRepository(Users).findOne({ where: { email } })
         .then(user => {
             const checkPassword = crypto.createHmac('sha256', process.env.SALT).update(password).digest('hex');
+            console.log("login user", user);
             if (user === undefined) {
                 res.status(401);
                 res.json({
@@ -71,8 +72,7 @@ export const login = function (req: Request, res: Response) {
 
 export const edit = async function (req: Request, res: Response) {
     // jwt주면 그거를 풀어서 아이디를 알아내자
-    console.log("Req.headers", req.headers.authorization);
-    const userId = jwt.verify(req.headers.authorization, process.env.KEY).id;
+    const userId = jwt.verify(req.headers.authorization, process.env.KEY);
     console.log("userId", userId);
     if (userId) {
         let { email, password, name } = req.body;
@@ -80,48 +80,11 @@ export const edit = async function (req: Request, res: Response) {
         const ChangeUser = await getRepository(Users).update(userId, {
             email, password, name
         });
-        // console.log("change", ChangeUser);
+        console.log("change", ChangeUser);
         res.status(200);
         res.json({ message: "성공적으로 수정되었습니다." });
     }
     else {
-        res.status(403);
-        res.json({
-            error: {
-                status: 403,
-                type: "ExpiredToken",
-                message: "만료된 토큰입니다. 비밀번호 재설정 요청을 다시 해주세요."
-            }
-        });
-    }
-};
-
-export const Info = function (req: Request, res: Response) {
-    const UserId = jwt.verify(req.headers.authorization, process.env.KEY).id;
-    console.log("userId", UserId);
-    if (UserId) {
-        // tslint:disable-next-line: no-floating-promises
-        getRepository(Users).findOne({
-            where: {
-                id: UserId
-            },
-            select: ["name"]
-        }).then(data => {
-            if (data) {
-                res.status(200);
-                res.json(data);
-            } else {
-                res.status(404);
-                res.json({
-                    error: {
-                        status: 404,
-                        type: "EmailNotFound",
-                        message: "입력하신 이메일로 가입되어 있는 일반 계정이 없습니다."
-                    }
-                });
-            }
-        });
-    } else {
         res.status(403);
         res.json({
             error: {
