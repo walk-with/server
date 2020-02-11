@@ -5,7 +5,6 @@ import margan from 'morgan';
 import env from 'dotenv';
 import cors from 'cors';
 import { lazy } from './lazy';
-import petRoutes from './routes/PetsRoutes';
 import tagsRoutes from './routes/TagsRoutes';
 import { createConnection } from "typeorm";
 import userRoutes from './routes/UserRoutes';
@@ -21,7 +20,7 @@ createConnection().then(async connection => {
     app.use('/users', userRoutes);
     app.use('/walks', walkRoutes);
     app.use('/tags', tagsRoutes);
-    app.use('/pets', petRoutes);
+    // app.use('/pets');
     // app.use('/chats');
     app.listen('4000', () => {
         console.log("4000 서버 작동 중");

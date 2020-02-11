@@ -70,3 +70,4 @@ export const GetUserPets = async function (req: Request, res: Response) {
         });
     }
 };
+
