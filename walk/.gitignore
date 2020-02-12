@@ -1,9 +1,9 @@
 .idea/
 .vscode/
-node_modules/
 build/
 tmp/
 temp/
 tsconfig.json
 tslint.json
 ormconfig.json
+node_modules/

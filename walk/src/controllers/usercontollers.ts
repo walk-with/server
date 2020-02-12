@@ -39,7 +39,6 @@ export const login = function (req: Request, res: Response) {
     return getRepository(Users).findOne({ where: { email } })
         .then(user => {
             const checkPassword = crypto.createHmac('sha256', process.env.SALT).update(password).digest('hex');
-            console.log("login user", user);
             if (user === undefined) {
                 res.status(401);
                 res.json({
@@ -80,7 +79,6 @@ export const edit = async function (req: Request, res: Response) {
         const ChangeUser = await getRepository(Users).update(userId, {
             email, password, name
         });
-        console.log("change", ChangeUser);
         res.status(200);
         res.json({ message: "성공적으로 수정되었습니다." });
     }
@@ -108,7 +106,6 @@ export const Info = function (req: Request, res: Response) {
             select: ["name"]
         }).then(data => {
             if (data) {
-                ///
                 res.status(200);
                 res.json(data);
             } else {

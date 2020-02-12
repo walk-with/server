@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { Walks } from "./Walks";
 import { Pets } from './Pets';
 import { Chats } from "./Chats";
 @Entity()
+
 export class Users {
 
     @PrimaryGeneratedColumn()
