@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-
+import { Chats } from './entity/Chats';
 import { Pets } from './entity/Pets';
 import { Walks } from './entity/Walks';
 import { Tags } from './entity/Tags';
@@ -136,5 +136,17 @@ export const lazy = async function (connection: any) {
     const Walk2 = await connection.manager.save(walk2);
     console.log("Walk2", Walk2);
 
+    const chats1 = new Chats();
+    chats1.text = "배부르다..";
+    chats1.user = user2;
+    chats1.walk = walks;
+    const Chat1 = await connection.manager.save(chats1);
+
+    const chats2 = new Chats();
+    chats2.text = "나두..";
+    chats2.user = user1;
+    chats2.walk = walks;
+    const Chat2 = await connection.manager.save(chats2);
     return;
+
 };

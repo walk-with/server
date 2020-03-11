@@ -7,7 +7,7 @@ import { Pets } from '../entity/Pets';
 
 env.config();
 
-export const PetCreate = async function (req: Request, res: Response) {
+export const CreatePet = async function (req: Request, res: Response) {
     const UserId = jwt.verify(req.headers.authorization, process.env.KEY).id;
     if (UserId) {
         const PetMaster = await getRepository(Users).findOne({
@@ -44,7 +44,7 @@ export const PetCreate = async function (req: Request, res: Response) {
     }
 };
 
-export const GetUserPets = async function (req: Request, res: Response) {
+export const GetUserPet = async function (req: Request, res: Response) {
     const UserId = jwt.verify(req.headers.authorization, process.env.KEY).id;
     if (UserId) {
         const PetList = await getRepository(Pets).find({
@@ -71,3 +71,31 @@ export const GetUserPets = async function (req: Request, res: Response) {
     }
 };
 
+
+export const DeletePet = async function (req: Request, res: Response) {
+    const PetId: number = req.query.PetId;
+    if (PetId) {
+        const deletePetInfo = await getRepository(Pets).delete(PetId);
+        if (deletePetInfo) {
+            res.sendStatus(204);
+        } else {
+            res.status(403);
+            res.json({
+                error: {
+                    status: 404,
+                    type: "PetNotFound",
+                    message: "입력하신 pet이 존재하지 않습니다."
+                }
+            });
+        }
+    } else {
+        res.status(403);
+        res.json({
+            error: {
+                status: 404,
+                type: "PetNotFound",
+                message: "입력하신 pet이 존재하지 않습니다."
+            }
+        });
+    }
+};

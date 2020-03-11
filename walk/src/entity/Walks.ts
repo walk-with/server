@@ -36,7 +36,7 @@ export class Walks {
     })
     user: Users;
 
-    @OneToMany(type => Chats, chat => chat.board, {
+    @OneToMany(type => Chats, chat => chat.walk, {
         cascade: true
     })
     chats: Chats[];
