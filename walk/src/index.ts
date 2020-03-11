@@ -7,6 +7,7 @@ import cors from 'cors';
 import socketIo from 'socket.io';
 import petsRoutes from './routes/PetsRoutes';
 import { lazy } from './lazy';
+import { SaveMessge } from './controllers/chatsControllers';
 import chatRoutes from './routes/chatsRoutes';
 import tagsRoutes from './routes/TagsRoutes';
 import { createConnection } from "typeorm";
@@ -26,13 +27,13 @@ createConnection().then(async connection => {
     app.use('/walks', walkRoutes);
     app.use('/tags', tagsRoutes);
     app.use('/pets', petsRoutes);
+    app.use('/chats', chatRoutes);
 
     io.sockets.on('connection', function (socket) {
         console.log("연결 성공");
         return SaveMessge(socket, io);
     });
     // tslint:disable-next-line:no-unused-expression
-    app.use('/chat', chatRoutes);
     // 하루에 한번 실행되는 함수 => 안에는 오늘 날짜를 기준으로 일주일 된 walks 테이블 지우는 함수
 }).catch(err => {
     throw new Error(err);
