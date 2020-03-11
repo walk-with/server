@@ -9,6 +9,7 @@ interface ChatUser {
     id: number;
     text: string;
     user: Users;
+    time: Date;
 }
 
 env.config();
@@ -20,19 +21,18 @@ export const SaveMessge = function (socket, io) {
     socket.on('chat', async (client) => {
         // 방에 id도 가져오기
         console.log("client", client);
-
-        // const userId : number = jwt.verify(,proccess.env.KEY).id;
-        // console.log("userId", userId);
-        // let ChatUser = await getRepository(Users).findOne<Users>(userId);
-        // let ChatRoom = await getRepository(Walks).findOne<Walks>(Number(walkId));
-
-        //시간 저장
-        io.to(walkId).emit("walkChat", { chat: client.msg }); // 특정 방에 있는 모두
+        const userId: number = jwt.verify(socket.handshake.authorization, process.env.KEY).id;
+        console.log("userId", userId);
+        let ChatUser: Users = await getRepository(Users).findOne(userId);
+        let ChatRoom: Walks = await getRepository(Walks).findOne(Number(walkId));
+        // 시간 저장
         let NewChat: Chats = new Chats();
-        // NewChat.user = ChatUser;
-        // NewChat.walk = ChatRoom;
-        // NewChat.text = client.chat;
-        // await getRepository(Chats).save(NewChat);
+        NewChat.user = ChatUser;
+        NewChat.walk = ChatRoom;
+        NewChat.text = client.chat;
+        await getRepository(Chats).save(NewChat);
+        io.to(walkId).emit("walkChat", { chat: client.msg }); // 특정 방에 있는 모두
+
     });
 };
 // 예전 채팅 조회
@@ -46,32 +46,66 @@ export const takeChats = async function (req: Request, res: Response) {
     const userId: number = jwt.verify(req.headers.authorization, process.env.KEY).id;
     const walkId: number = req.query.walkId;
     console.log("walk", walkId);
-    const ChatsFromRoom: ChatUser[] = await getRepository(Chats).find({
-        where: {
-            walk: walkId
-        },
-        relations: ["user"]
-    });
-    const chatslist = ChatsFromRoom.map(data => {
-        let obj: Chatslist | object = {};
-        for (let key in data) {
-            if (key === "user") {
-                if (data["user"]["id"] === userId) {
-                    obj["owner"] = true;
-                } else {
-                    obj["owner"] = false;
+    if (walkId && userId) {
+        const ChatsFromRoom = await getRepository(Chats).find({
+            where: {
+                walk: walkId
+            },
+            relations: ["user"]
+        });
+        if (ChatsFromRoom) {
+            const chatslist = ChatsFromRoom.map(data => {
+                let obj: Chatslist | object = {};
+                for (let key in data) {
+                    if (key === "user") {
+                        obj["user"] = data["user"]["name"];
+                        if (data["user"]["id"] === userId) {
+                            obj["owner"] = true;
+                        } else {
+                            obj["owner"] = false;
+                        }
+                    } else {
+                        obj[key] = data[key];
+                    }
                 }
+                return obj;
+            });
+            if (chatslist.length > 0) {
+                res.status(200).json(chatslist);
             } else {
-                obj[key] = data[key];
+                res.status(200).json([]);
             }
+        } else {
+            res.status(404);
+            res.json({
+                error: {
+                    status: 404,
+                    type: "walkIdNotFound",
+                    message: "입력하신 walkId에 맞는 walk가 존재하지 않습니다."
+                }
+            });
         }
-        console.log("obj", obj);
-        return obj;
-    });
-    console.log("chatslist", chatslist);
-    res.status(204);
-    res.json(chatslist);
+    } else {
+        if (walkId) {
+            res.status(404);
+            res.json({
+                error: {
+                    status: 403,
+                    type: "ExpiredToken",
+                    message: "만료된 토큰입니다. 비밀번호 재설정 요청을 다시 해주세요."
+                }
+            });
+        } else {
+            res.status(400);
+            res.json({
+                error: {
+                    status: 400,
+                    type: "walkIdNotEnter",
+                    message: "walkId를 입력하지 않았습니다."
+                }
+            });
+        }
+    }
     // error 메세지..
-    // 날짜 순서 대로..내림차순으로 날짜 칼럼 추가해야 할 것 같음.
 };
 // 합쳐서 아님 각각

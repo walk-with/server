@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Timestamp } from "typeorm";
 import { Users } from './Users';
 import { Walks } from "./Walks";
 @Entity()
@@ -10,7 +10,7 @@ export class Chats {
     @Column()
     text: string;
 
-    @Column()
+    @Column({ type: "datetime", default: () => "CURRENT_TIMESTAMP" })
     time: string;
 
     @ManyToOne(type => Users, user => user.chat, {
