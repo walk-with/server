@@ -12,7 +12,6 @@ import tagsRoutes from './routes/TagsRoutes';
 import { createConnection } from "typeorm";
 import userRoutes from './routes/UserRoutes';
 import walkRoutes from './routes/WalksRoutes';
-import { SaveMessge } from './controllers/chatsControllers';
 import { NextFunction } from "connect";
 
 env.config();
