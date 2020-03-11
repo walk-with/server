@@ -1,10 +1,11 @@
 import express, { Router } from 'express';
 // tslint:disable-next-line: no-duplicate-imports
-import { PetCreate, GetUserPets } from '../controllers/petsControllers';
+import { CreatePet, GetUserPet, DeletePet } from '../controllers/petsControllers';
 const router: Router = express.Router();
 
-router.get('/', GetUserPets);
-router.post('/create', PetCreate);
+router.get('/', GetUserPet);
+router.delete('/delete', DeletePet);
+router.post('/create', CreatePet);
 
 
 export default router;

@@ -1,10 +1,11 @@
 import express, { Router } from 'express';
-import { signup, login, edit, Info } from '../controllers/usercontollers';
+import { Signup, Login, Edit, Info, Delete } from '../controllers/usercontollers';
 const router: Router = express.Router();
 
-router.post('/signup', signup);
-router.post('/login', login);
-router.patch('/edit', edit);
+router.post('/signup', Signup);
+router.post('/login', Login);
+router.patch('/edit', Edit);
+router.delete('/delete', Delete);
 router.get('/', Info);
 
 

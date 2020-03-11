@@ -10,6 +10,9 @@ export class Chats {
     @Column()
     text: string;
 
+    @Column()
+    time: string;
+
     @ManyToOne(type => Users, user => user.chat, {
         onDelete: "CASCADE"
     })
@@ -18,5 +21,5 @@ export class Chats {
     @ManyToOne(type => Walks, walk => walk.chats, {
         onDelete: "CASCADE"
     })
-    board: Walks;
+    walk: Walks;
 }
