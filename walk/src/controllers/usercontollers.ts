@@ -73,11 +73,12 @@ export const Edit = async function (req: Request, res: Response) {
     // jwt주면 그거를 풀어서 아이디를 알아내자
     const userId = jwt.verify(req.headers.authorization, process.env.KEY);
     console.log("userId", userId);
+    console.log("req", req.body);
     if (userId) {
-        let { email, password, name } = req.body;
+        let { password, name } = req.body;
         password = crypto.createHmac('sha256', process.env.SALT).update(password).digest('hex');
         const ChangeUser = await getRepository(Users).update(userId, {
-            email, password, name
+            password, name
         });
         res.status(200);
         res.json({ message: "성공적으로 수정되었습니다." });
