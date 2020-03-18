@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getRepository } from "typeorm";
+import { getRepository, In } from "typeorm";
 import env from 'dotenv';
 import jwt from "jsonwebtoken";
 import { Day } from '../utils/Date';
@@ -140,14 +140,14 @@ export const create = async function (req: Request, res: Response) {
     console.log("req.headers.authorization", req.headers.authorization, process.env.KEY);
     const userId = await jwt.verify(req.headers.authorization, process.env.KEY);
     if (userId) {
-        const { title, Longitude, Latitude, StartTime, EndTime, contents, petId, tags } = req.body;
+        const { title, Longitude, date, Latitude, time, contents, petId, tag } = req.body;
         const Walk = new Walks();
         Walk.title = title;
-        // Walk.date = Day;
+        Walk.date = date;
         Walk.Latitude = Latitude;
         Walk.Longitude = Longitude;
-        Walk.StartTime = StartTime;
-        Walk.EndTime = EndTime;
+        Walk.StartTime = time[0];
+        Walk.EndTime = time[1];
         Walk.contents = contents;
         const organizer = await getRepository(Users).findOne({
             id: userId.id
@@ -156,9 +156,9 @@ export const create = async function (req: Request, res: Response) {
             id: petId
         });
         let TagsInfo = [];
-        for (let i = 0; i < tags.length; i++) {
+        for (let i = 0; i < tag.length; i++) {
             let walkTag = await getRepository(Tags).findOne({
-                id: tags[i]
+                id: tag[i]
             });
             TagsInfo.push(walkTag);
         }
@@ -178,6 +178,63 @@ export const create = async function (req: Request, res: Response) {
                 status: 403,
                 type: "ExpiredToken",
                 message: "만료된 토큰입니다. 다시 로그인 부탁드립니다."
+            }
+        });
+    }
+};
+
+export const edit = async function (req: Request, res: Response) {
+    const userId: number = jwt.verify(req.headers.authorization, process.env.KEY).id;
+    const walkId: number = req.query.walkId;
+    if (userId) {
+        const walkCreateUserID = await getRepository(Walks).findOne({
+            relations: ["user"],
+            where: {
+                id: walkId,
+            }
+        });
+        if (walkCreateUserID) {
+            if (walkCreateUserID["user"]["id"] === userId) {
+                const { title, Longitude, Latitude, date, time, contents, tag, pets } = req.body;
+                let writerTags = await getRepository(Tags).find({ where: { id: In(tag) } });
+                const writerPets = await getRepository(Pets).find({ where: { id: In(pets) } });
+                let updateWalk = await getRepository(Walks).findOne(walkId);
+                updateWalk.title = title;
+                updateWalk.Longitude = Longitude;
+                updateWalk.Latitude = Latitude;
+                updateWalk.date = date;
+                updateWalk.StartTime = time[0];
+                updateWalk.EndTime = time[1];
+                updateWalk.contents = contents;
+                updateWalk.tags = writerTags;
+                updateWalk.pet = writerPets;
+                await getRepository(Walks).save(updateWalk);
+                res.sendStatus(200);
+            } else {
+                res.status(401).json({
+                    error: {
+                        status: 401,
+                        type: "NotWriter",
+                        message: "작성자만 수정 할 수 있습니다."
+                    }
+                });
+            }
+            res.status(204);
+        } else {
+            res.status(404).json({
+                error: {
+                    status: 404,
+                    type: "walkNotFound",
+                    message: "입력하신 walkId에 맞는 데이터가 존재하지 않습니다."
+                }
+            });
+        }
+    } else {
+        res.status(403).json({
+            error: {
+                status: 403,
+                type: "ExpiredToken",
+                message: "만료된 토큰입니다. 비밀번호 재설정 요청을 다시 해주세요."
             }
         });
     }
