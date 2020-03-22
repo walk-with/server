@@ -155,13 +155,15 @@ export const create = async function (req: Request, res: Response) {
         const organizerPet = await getRepository(Pets).find({
             id: petId
         });
-        let TagsInfo = [];
-        for (let i = 0; i < tag.length; i++) {
-            let walkTag = await getRepository(Tags).findOne({
-                id: tag[i]
-            });
-            TagsInfo.push(walkTag);
-        }
+        // let TagsInfo = [];
+        // for (let i = 0; i < tag.length; i++) {
+        //     let walkTag = await getRepository(Tags).findOne({
+        //         id: tag[i]
+        //     });
+        //     TagsInfo.push(walkTag);
+        // }
+        const TagsInfo = await getRepository(Tags).find({ where: { id: In(tag) } });
+        console.log("TagsInfo", TagsInfo);
         Walk.user = organizer;
         Walk.tags = TagsInfo;
         Walk.pet = organizerPet;
