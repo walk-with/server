@@ -44,6 +44,7 @@ export const list = async function (req: Request, res: Response) {
             relations: ['pet'],
             where: { id: walkId, date: Day }
         });
+
         // 오늘 날짜에 맞는 walks중에서 참여 되어있는 펫들의 정보를 가져온다.
         for (let f = 0; f < walksPartyPets.length; f++) {
             for (let y = 0; y < walksPartyPets[f]["pet"].length; y++) {
@@ -60,7 +61,7 @@ export const list = async function (req: Request, res: Response) {
         petIds = [];
         // 반복문 끝날때 마다 배열 초기화
     }
-    // console.log("WalkImageAndId", WalkImageAndIds);
+    console.log("WalkImageAndId", WalkImageAndIds);
     let count = 0;
     const walksListTags = await getRepository(Walks).find({
         relations: ['tags', 'user'],
@@ -137,10 +138,9 @@ export const detail = async function (req: Request, res: Response) {
 };
 
 export const create = async function (req: Request, res: Response) {
-    console.log("req.headers.authorization", req.headers.authorization, process.env.KEY);
     const userId = await jwt.verify(req.headers.authorization, process.env.KEY);
     if (userId) {
-        const { title, Longitude, date, Latitude, time, contents, petId, tag } = req.body;
+        const { title, Longitude, date, Latitude, time, contents, pets, tag } = req.body;
         const Walk = new Walks();
         Walk.title = title;
         Walk.date = date;
@@ -152,18 +152,8 @@ export const create = async function (req: Request, res: Response) {
         const organizer = await getRepository(Users).findOne({
             id: userId.id
         });
-        const organizerPet = await getRepository(Pets).find({
-            id: petId
-        });
-        // let TagsInfo = [];
-        // for (let i = 0; i < tag.length; i++) {
-        //     let walkTag = await getRepository(Tags).findOne({
-        //         id: tag[i]
-        //     });
-        //     TagsInfo.push(walkTag);
-        // }
+        const organizerPet = await getRepository(Pets).find({ where: { id: In(pets) } });
         const TagsInfo = await getRepository(Tags).find({ where: { id: In(tag) } });
-        console.log("TagsInfo", TagsInfo);
         Walk.user = organizer;
         Walk.tags = TagsInfo;
         Walk.pet = organizerPet;
